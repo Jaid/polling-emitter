@@ -17,8 +17,9 @@ import {isEmpty, isFunction} from "lodash"
  * import PollingEmitter from "polling-emitter"
  * const emitter = PollingEmitter()
  * @class
+ * @extends {EventEmitter}
  */
-export default class extends EventEmitter {
+export default class PollingEmitter extends EventEmitter {
 
   /**
    * @constructor
@@ -43,6 +44,7 @@ export default class extends EventEmitter {
 
   /**
    * @function
+   * @fires PollingEmitter#newEntry
    */
   start() {
     if (this.interval) {
@@ -68,6 +70,10 @@ export default class extends EventEmitter {
               return
             }
           }
+
+          /**
+           * @event PollingEmitter#newEntry
+           */
           this.emit("newEntry", entry, id)
         }
       } catch (error) {
@@ -98,6 +104,7 @@ export default class extends EventEmitter {
 
   /**
    * @function
+   * @param {Object} entry
    * @returns {boolean}
    */
   hasAlreadyProcessedEntry(entry) {
@@ -106,6 +113,7 @@ export default class extends EventEmitter {
 
   /**
    * @function
+   * @param {string} entryId
    * @returns {boolean}
    */
   hasAlreadyProcessedEntryId(entryId) {
@@ -114,6 +122,7 @@ export default class extends EventEmitter {
 
   /**
    * @function
+   * @param {Object} entry
    * @returns {string}
    */
   getIdFromEntry(entry) {
@@ -126,7 +135,7 @@ export default class extends EventEmitter {
    * @throws {Error}
    */
   async fetchEntries() {
-    throw new Error("PollingEmitter.fetchEntries has to be overwritten by subclass")
+    throw new Error("PollingEmitter.fetchEntries must be overwritten by subclass")
   }
 
 }

@@ -9,4 +9,5 @@ const {default: PollingEmitter} = indexModule
 
 it("should run", () => {
   const emitter = new PollingEmitter()
+  emitter.
 })
