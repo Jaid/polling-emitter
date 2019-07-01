@@ -1,12 +1,132 @@
 /** @module polling-emitter */
 
+import EventEmitter from "eventemitter3"
+import {isEmpty, isFunction} from "lodash"
+
+/**
+ * @typedef Options
+ * @type {Object}
+ * @prop {number} [pollIntervalSeconds=10]
+ * @prop {boolean} [invalidateInitialEntries=false]
+ * @prop {boolean} [autostart=true]
+ */
+
 /**
  * Returns the number of seconds passed since Unix epoch (01 January 1970)
  * @example
- * import pollingEmitter from "polling-emitter"
- * const result = pollingEmitter()
- * result === 1549410770
- * @function
- * @returns {number} Seconds since epoch
+ * import PollingEmitter from "polling-emitter"
+ * const emitter = PollingEmitter()
+ * @class
  */
-export default () => Math.floor(Date.now() / 1000)
+export default class extends EventEmitter {
+
+  /**
+   * @constructor
+   * @param {Options} options
+   */
+  constructor(options) {
+    super()
+    this.options = {
+      pollIntervalSeconds: 10,
+      invalidateInitialEntries: false,
+      autostart: true,
+      ...options,
+    }
+    this.processedEntryIds = new Set
+    if (this.options.invalidateInitialEntries) {
+      this.invalidateEntries()
+    }
+    if (this.options.autostart) {
+      this.start()
+    }
+  }
+
+  /**
+   * @function
+   */
+  start() {
+    if (this.interval) {
+      clearInterval(this.interval)
+      delete this.interval
+    }
+    this.interval = setInterval(async () => {
+      try {
+        const fetchedEntries = await this.fetchEntries()
+        if (!fetchedEntries) {
+          return
+        }
+        const unprocessedEntries = fetchedEntries.filter(entry => !this.hasAlreadyProcessedEntry(entry))
+        if (unprocessedEntries |> isEmpty) {
+          return
+        }
+        for (const entry of unprocessedEntries) {
+          const id = this.getIdFromEntry(entry)
+          this.processedEntryIds.add(id)
+          if (this.processEntry |> isFunction) {
+            const shouldEmitEntry = await this.processEntry(entry, id)
+            if (shouldEmitEntry === false) {
+              return
+            }
+          }
+          this.emit("newEntry", entry, id)
+        }
+      } catch (error) {
+        this.handleError?.(error)
+      }
+    }, this.options.pollIntervalSeconds * 1000)
+  }
+
+  /**
+   * @async
+   * @function
+   */
+  async invalidateEntries() {
+    try {
+      const fetchedEntries = await this.fetchEntries()
+      if (!fetchedEntries) {
+        return
+      }
+      for (const entry of fetchedEntries) {
+        const id = this.getIdFromEntry(entry)
+        this.processedEntryIds.add(id)
+        this.emit("invalidatedEntry", entry, id)
+      }
+    } catch (error) {
+      this.handleError?.(error)
+    }
+  }
+
+  /**
+   * @function
+   * @returns {boolean}
+   */
+  hasAlreadyProcessedEntry(entry) {
+    return this.processedEntryIds.has(this.getIdFromEntry(entry))
+  }
+
+  /**
+   * @function
+   * @returns {boolean}
+   */
+  hasAlreadyProcessedEntryId(entryId) {
+    return this.processedEntryIds.has(entryId)
+  }
+
+  /**
+   * @function
+   * @returns {string}
+   */
+  getIdFromEntry(entry) {
+    return entry.id
+  }
+
+  /**
+   * @async
+   * @function
+   * @throws {Error}
+   */
+  async fetchEntries() {
+    throw new Error("PollingEmitter.fetchEntries has to be overwritten by subclass")
+  }
+
+}

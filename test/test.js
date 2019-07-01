@@ -5,9 +5,8 @@ const indexModule = (process.env.MAIN ? path.resolve(process.env.MAIN) : path.jo
 /**
    * @type { import("../src") }
    */
-const {default: pollingEmitter} = indexModule
+const {default: PollingEmitter} = indexModule
 
 it("should run", () => {
-  const result = pollingEmitter()
-  expect(result).toBeGreaterThan(1549410770)
+  const emitter = new PollingEmitter()
 })
