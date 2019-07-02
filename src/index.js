@@ -134,8 +134,9 @@ export default class PollingEmitter extends EventEmitter {
    * @function
    * @throws {Error}
    */
-  async fetchEntries() {
-    throw new Error("PollingEmitter.fetchEntries must be overwritten by subclass")
+  stop() {
+    clearInterval(this.interval)
+    delete this.interval
   }
 
 }
