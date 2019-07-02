@@ -10,8 +10,11 @@ import {isEmpty, isFunction} from "lodash"
  * @prop {boolean} [invalidateInitialEntries=false]
  * @prop {boolean} [autostart=true]
  * @prop {(entry: Object) => string} [getIdFromEntry=entry => entry.id]
+ * @prop {Function} [getIdFromEntry=entry => entry.id]
  * @prop {(entry: Object, id: string) => (boolean|void|Promise<boolean|void>)} [processEntry]
+ * @prop {Function} [processEntry]
  * @prop {() => Promise<Object[]>} fetchEntries
+ * @prop {Function} fetchEntries
  */
 
 /**
