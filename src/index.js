@@ -9,6 +9,9 @@ import {isEmpty, isFunction} from "lodash"
  * @prop {number} [pollIntervalSeconds=10]
  * @prop {boolean} [invalidateInitialEntries=false]
  * @prop {boolean} [autostart=true]
+ * @prop {(entry: Object) => string} [getIdFromEntry=entry => entry.id]
+ * @prop {(entry: Object, id: string) => (boolean|void|Promise<boolean|void>)} [processEntry]
+ * @prop {() => Promise<Object[]>} fetchEntries
  */
 
 /**
@@ -27,12 +30,22 @@ export default class PollingEmitter extends EventEmitter {
    */
   constructor(options) {
     super()
+
+    /**
+     * @member {Options}
+     * @readonly
+     */
     this.options = {
       pollIntervalSeconds: 10,
       invalidateInitialEntries: false,
       autostart: true,
+      getIdFromEntry: entry => entry.id,
       ...options,
     }
+
+    /**
+     * @member {Set<string>}
+     */
     this.processedEntryIds = new Set
     if (this.options.invalidateInitialEntries) {
       this.invalidateEntries()
@@ -48,12 +61,11 @@ export default class PollingEmitter extends EventEmitter {
    */
   start() {
     if (this.interval) {
-      clearInterval(this.interval)
-      delete this.interval
+      this.stop()
     }
     this.interval = setInterval(async () => {
       try {
-        const fetchedEntries = await this.fetchEntries()
+        const fetchedEntries = await this.options.fetchEntries()
         if (!fetchedEntries) {
           return
         }
@@ -62,10 +74,10 @@ export default class PollingEmitter extends EventEmitter {
           return
         }
         for (const entry of unprocessedEntries) {
-          const id = this.getIdFromEntry(entry)
+          const id = this.options.getIdFromEntry(entry)
           this.processedEntryIds.add(id)
-          if (this.processEntry |> isFunction) {
-            const shouldEmitEntry = await this.processEntry(entry, id)
+          if (this.options.processEntry |> isFunction) {
+            const shouldEmitEntry = await this.options.processEntry(entry, id)
             if (shouldEmitEntry === false) {
               return
             }
@@ -88,12 +100,12 @@ export default class PollingEmitter extends EventEmitter {
    */
   async invalidateEntries() {
     try {
-      const fetchedEntries = await this.fetchEntries()
+      const fetchedEntries = await this.options.fetchEntries()
       if (!fetchedEntries) {
         return
       }
       for (const entry of fetchedEntries) {
-        const id = this.getIdFromEntry(entry)
+        const id = this.options.getIdFromEntry(entry)
         this.processedEntryIds.add(id)
         this.emit("invalidatedEntry", entry, id)
       }
@@ -108,7 +120,7 @@ export default class PollingEmitter extends EventEmitter {
    * @returns {boolean}
    */
   hasAlreadyProcessedEntry(entry) {
-    return this.processedEntryIds.has(this.getIdFromEntry(entry))
+    return this.processedEntryIds.has(this.options.getIdFromEntry(entry))
   }
 
   /**
@@ -122,17 +134,6 @@ export default class PollingEmitter extends EventEmitter {
 
   /**
    * @function
-   * @param {Object} entry
-   * @returns {string}
-   */
-  getIdFromEntry(entry) {
-    return entry.id
-  }
-
-  /**
-   * @async
-   * @function
-   * @throws {Error}
    */
   stop() {
     clearInterval(this.interval)
