@@ -22,7 +22,7 @@ import {isEmpty, isFunction} from "lodash"
  * @class
  * @extends {EventEmitter}
  */
-export default class PollingEmitter extends EventEmitter {
+export default class extends EventEmitter {
 
   /**
    * @constructor
