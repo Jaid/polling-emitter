@@ -18,7 +18,6 @@ import {isEmpty, isFunction} from "lodash"
  */
 
 /**
- * Returns the number of seconds passed since Unix epoch (01 January 1970)
  * @example
  * import PollingEmitter from "polling-emitter"
  * const emitter = PollingEmitter()
@@ -68,7 +67,7 @@ export default class extends EventEmitter {
     }
     this.interval = setInterval(async () => {
       try {
-        const fetchedEntries = await this.options.fetchEntries()
+        const fetchedEntries = await (this.options.fetchEntries || this.fetchEntries)()
         if (!fetchedEntries) {
           return
         }
@@ -92,7 +91,7 @@ export default class extends EventEmitter {
           this.emit("newEntry", entry)
         }
       } catch (error) {
-        this.handleError?.(error)
+      (this.options.handleError || this.handleError)?.(error)
       }
     }, this.options.pollIntervalSeconds * 1000)
   }
@@ -103,7 +102,7 @@ export default class extends EventEmitter {
    */
   async invalidateEntries() {
     try {
-      const fetchedEntries = await this.options.fetchEntries()
+      const fetchedEntries = await (this.options.fetchEntries || this.fetchEntries)()
       if (!fetchedEntries) {
         return
       }
@@ -113,7 +112,7 @@ export default class extends EventEmitter {
         this.emit("invalidatedEntry", entry)
       }
     } catch (error) {
-      this.handleError?.(error)
+      (this.options.handleError || this.handleError)?.(error)
     }
   }
 
