@@ -2,7 +2,7 @@
 
 import EventEmitter from "eventemitter3"
 import {isFunction} from "lodash"
-import hasContent, {isEmpty} from "has-content"
+import {isEmpty} from "has-content"
 
 const debug = require("debug")(_PKG_NAME)
 
