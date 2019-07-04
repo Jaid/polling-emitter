@@ -3,6 +3,8 @@
 import EventEmitter from "eventemitter3"
 import {isEmpty, isFunction} from "lodash"
 
+const debug = require("debug")(_PKG_NAME)
+
 /**
  * @typedef Options
  * @type {Object}
@@ -65,6 +67,7 @@ export default class extends EventEmitter {
     if (this.interval) {
       this.stop()
     }
+    debug("Starting PollingEmitter with an interval of %s seconds", this.options.pollIntervalSeconds)
     this.interval = setInterval(async () => {
       try {
         const fetchedEntries = await (this.options.fetchEntries || this.fetchEntries)()
@@ -78,6 +81,7 @@ export default class extends EventEmitter {
         for (const entry of unprocessedEntries) {
           const id = this.options.getIdFromEntry(entry)
           this.processedEntryIds.add(id)
+          debug("Invalidated %s", id)
           if ((this.options.processEntry || this.processEntry) |> isFunction) {
             const shouldEmitEntry = await (this.options.processEntry || this.processEntry)(entry)
             if (shouldEmitEntry === false) {
@@ -109,6 +113,7 @@ export default class extends EventEmitter {
       for (const entry of fetchedEntries) {
         const id = this.options.getIdFromEntry(entry)
         this.processedEntryIds.add(id)
+        debug("Invalidated %s", id)
         this.emit("invalidatedEntry", entry)
       }
     } catch (error) {
@@ -138,6 +143,7 @@ export default class extends EventEmitter {
    * @function
    */
   stop() {
+    debug("Stopping PollingEmitter")
     clearInterval(this.interval)
     delete this.interval
   }
