@@ -3,6 +3,7 @@
 import EventEmitter from "eventemitter3"
 import {isFunction} from "lodash"
 import {isEmpty} from "has-content"
+import intervalPromise from "interval-promise"
 
 const debug = require("debug")(_PKG_NAME)
 
@@ -57,6 +58,11 @@ export default class extends EventEmitter {
      * @member {number}
      */
     this.successfulRunsCount = 0
+
+    /**
+     * @member {boolean}
+     */
+    this.isRunning = false
     if (this.options.fetchEntries) {
       this.fetchEntries = this.options.fetchEntries
     }
@@ -76,15 +82,21 @@ export default class extends EventEmitter {
    * @fires PollingEmitter#newEntry
    */
   start() {
-    if (this.interval) {
-      this.stop()
+    if (this.isRunning) {
+      debug("Skipped start(), because PollingEmitter is already running")
+      return
     }
     debug("Starting PollingEmitter with an interval of %s seconds", this.options.pollIntervalSeconds)
-    this.interval = setInterval(async () => {
+    this.isRunning = true
+    const job = async (iteration, stop) => {
+      if (!this.isRunning) {
+        stop()
+        return
+      }
       try {
         const fetchedEntries = await this.fetchEntries()
         this.successfulRunsCount++
-        if (this.options.invalidateInitialEntries && nthis.successfulRunsCount === 1) {
+        if (this.options.invalidateInitialEntries && this.successfulRunsCount === 1) {
           for (const entry of fetchedEntries) {
             const id = this.options.getIdFromEntry(entry)
             this.processedEntryIds.add(id)
@@ -124,7 +136,8 @@ export default class extends EventEmitter {
           throw error
         }
       }
-    }, this.options.pollIntervalSeconds * 1000)
+    }
+    intervalPromise(job, this.options.pollIntervalSeconds * 1000)
   }
 
   /**
@@ -150,8 +163,7 @@ export default class extends EventEmitter {
    */
   stop() {
     debug("Stopping PollingEmitter")
-    clearInterval(this.interval)
-    delete this.interval
+    this.isRunning = false
   }
 
 }
