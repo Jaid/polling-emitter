@@ -14,6 +14,7 @@ it("should run", async () => {
   let newEntryFired = false
   const emitter = new PollingEmitter({
     pollIntervalSeconds: 5,
+    invalidateInitialEntries: false,
     fetchEntries: () => [{key: "a"}],
     getIdFromEntry: ({key}) => key,
     autostart: true,
@@ -36,6 +37,7 @@ it("Extending class should work", async () => {
       super({
         getIdFromEntry: entry => entry.myId,
         pollIntervalSeconds: 2,
+        invalidateInitialEntries: false,
       })
       this.start()
     }

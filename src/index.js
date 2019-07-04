@@ -84,7 +84,7 @@ export default class extends EventEmitter {
       try {
         const fetchedEntries = await this.fetchEntries()
         this.successfulRunsCount++
-        if (this.successfulRunsCount === 1) {
+        if (this.options.invalidateInitialEntries && nthis.successfulRunsCount === 1) {
           for (const entry of fetchedEntries) {
             const id = this.options.getIdFromEntry(entry)
             this.processedEntryIds.add(id)
