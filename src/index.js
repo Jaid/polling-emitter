@@ -52,6 +52,11 @@ export default class extends EventEmitter {
      * @member {Set<string>}
      */
     this.processedEntryIds = new Set
+
+    /**
+     * @member {number}
+     */
+    this.successfulRunsCount = 0
     if (this.options.fetchEntries) {
       this.fetchEntries = this.options.fetchEntries
     }
@@ -60,9 +65,6 @@ export default class extends EventEmitter {
     }
     if (this.options.handleError) {
       this.handleError = this.options.handleError
-    }
-    if (this.options.invalidateInitialEntries) {
-      this.invalidateEntries()
     }
     if (this.options.autostart) {
       this.start()
@@ -81,6 +83,15 @@ export default class extends EventEmitter {
     this.interval = setInterval(async () => {
       try {
         const fetchedEntries = await this.fetchEntries()
+        this.successfulRunsCount++
+        if (this.successfulRunsCount === 1) {
+          for (const entry of this.fetchEntries) {
+            const id = this.options.getIdFromEntry(entry)
+            this.processedEntryIds.add(id)
+            debug("Initially invalidated %s", id)
+          }
+          return
+        }
         if (fetchedEntries |> isEmpty) {
           return
         }
@@ -112,31 +123,6 @@ export default class extends EventEmitter {
         }
       }
     }, this.options.pollIntervalSeconds * 1000)
-  }
-
-  /**
-   * @async
-   * @function
-   */
-  async invalidateEntries() {
-    try {
-      const fetchedEntries = await this.fetchEntries()
-      if (fetchedEntries |> isEmpty) {
-        return
-      }
-      for (const entry of fetchedEntries) {
-        const id = this.options.getIdFromEntry(entry)
-        this.processedEntryIds.add(id)
-        debug("Invalidated %s", id)
-        this.emit("invalidatedEntry", entry)
-      }
-    } catch (error) {
-      if (this.handleError) {
-        this.handleError(error)
-      } else {
-        throw error
-      }
-    }
   }
 
   /**
