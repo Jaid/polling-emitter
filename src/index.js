@@ -89,7 +89,7 @@ export default class extends EventEmitter {
           /**
            * @event PollingEmitter#newEntry
            */
-          this.emit("newEntry", entry, id)
+          this.emit("newEntry", entry)
         }
       } catch (error) {
         this.handleError?.(error)
@@ -110,7 +110,7 @@ export default class extends EventEmitter {
       for (const entry of fetchedEntries) {
         const id = this.options.getIdFromEntry(entry)
         this.processedEntryIds.add(id)
-        this.emit("invalidatedEntry", entry, id)
+        this.emit("invalidatedEntry", entry)
       }
     } catch (error) {
       this.handleError?.(error)
