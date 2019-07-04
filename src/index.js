@@ -67,6 +67,12 @@ export default class extends EventEmitter {
     if (this.options.handleError) {
       this.handleError = this.options.handleError
     }
+    if (this.options.invalidateInitialEntries) {
+      this.invalidateEntries()
+    }
+    if (this.options.autostart) {
+      this.start()
+    }
   }
 
   /**
