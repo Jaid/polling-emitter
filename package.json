@@ -6,7 +6,8 @@
   "dependencies": {
     "@babel/runtime": "^7.4.5",
     "debug": "^4.1.1",
-    "eventemitter3": "^4.0.0"
+    "eventemitter3": "^4.0.0",
+    "has-content": "^1.1.0"
   },
   "devDependencies": {
     "acorn": "^6.1.1",

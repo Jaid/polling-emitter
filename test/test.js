@@ -27,3 +27,39 @@ it("should run", async () => {
   expect(emitter.interval).toBe(undefined)
   expect(newEntryFired).toBeTruthy()
 }, ms`10 seconds`)
+
+it("Extending class should work", async () => {
+  const MyPollingEmitter = class extends PollingEmitter {
+
+    constructor() {
+      super({
+        getIdFromEntry: entry => entry.myId,
+        pollIntervalSeconds: 2,
+      })
+    }
+
+    async fetchEntries() {
+      await delay(1)
+      return [
+        {
+          myId: "car",
+          color: "red",
+        },
+      ]
+    }
+
+  }
+  let newEntryFired = false
+  const emitter = new MyPollingEmitter({
+  })
+  emitter.on("newEntry", () => {
+    newEntryFired = true
+  })
+  expect(emitter.processedEntryIds.size).toBe(0)
+  await delay(ms`3 seconds`)
+  expect(emitter.processedEntryIds.size).toBe(1)
+  expect(emitter.hasAlreadyProcessedEntryId("car")).toBe(true)
+  emitter.stop()
+  expect(emitter.interval).toBe(undefined)
+  expect(newEntryFired).toBeTruthy()
+}, ms`10 seconds`)
