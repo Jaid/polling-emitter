@@ -52,12 +52,6 @@ export default class extends EventEmitter {
      * @member {Set<string>}
      */
     this.processedEntryIds = new Set
-    if (this.options.invalidateInitialEntries) {
-      this.invalidateEntries()
-    }
-    if (this.options.autostart) {
-      this.start()
-    }
     if (this.options.fetchEntries) {
       this.fetchEntries = this.options.fetchEntries
     }
@@ -111,7 +105,11 @@ export default class extends EventEmitter {
           this.emit("newEntry", entry)
         }
       } catch (error) {
-        this.handleError?.(error)
+        if (this.handleError) {
+          this.handleError(error)
+        } else {
+          throw error
+        }
       }
     }, this.options.pollIntervalSeconds * 1000)
   }
@@ -133,7 +131,11 @@ export default class extends EventEmitter {
         this.emit("invalidatedEntry", entry)
       }
     } catch (error) {
-      this.handleError?.(error)
+      if (this.handleError) {
+        this.handleError(error)
+      } else {
+        throw error
+      }
     }
   }
 
