@@ -78,8 +78,8 @@ export default class extends EventEmitter {
         for (const entry of unprocessedEntries) {
           const id = this.options.getIdFromEntry(entry)
           this.processedEntryIds.add(id)
-          if (this.options.processEntry |> isFunction) {
-            const shouldEmitEntry = await this.options.processEntry(entry, id)
+          if ((this.options.processEntry || this.processEntry) |> isFunction) {
+            const shouldEmitEntry = await (this.options.processEntry || this.processEntry)(entry)
             if (shouldEmitEntry === false) {
               return
             }
