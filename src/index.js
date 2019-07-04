@@ -43,7 +43,7 @@ export default class extends EventEmitter {
     this.options = {
       pollIntervalSeconds: 10,
       invalidateInitialEntries: false,
-      autostart: true,
+      autostart: false,
       getIdFromEntry: entry => entry.id,
       ...options,
     }
