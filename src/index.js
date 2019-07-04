@@ -117,8 +117,10 @@ export default class extends EventEmitter {
         }
       } catch (error) {
         if (this.handleError) {
+          debug("Handling error: %s", error)
           this.handleError(error)
         } else {
+          debug("Throwing error: %s", error)
           throw error
         }
       }
