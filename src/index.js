@@ -22,11 +22,12 @@ const debug = require("debug")(_PKG_NAME)
  */
 
 /**
+ * Polls data from any source at given interval and fires events on changes.
+ * @class
+ * @extends {EventEmitter}
  * @example
  * import PollingEmitter from "polling-emitter"
  * const emitter = PollingEmitter()
- * @class
- * @extends {EventEmitter}
  */
 export default class extends EventEmitter {
 
