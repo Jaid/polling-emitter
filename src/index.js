@@ -4,13 +4,14 @@ import EventEmitter from "eventemitter3"
 import {isFunction} from "lodash"
 import {isEmpty} from "has-content"
 import intervalPromise from "interval-promise"
+import ms from "ms.macro"
 
 const debug = require("debug")(_PKG_NAME)
 
 /**
  * @typedef Options
  * @type {Object}
- * @prop {number} [pollIntervalSeconds=10]
+ * @prop {number} [pollInterval=60000]
  * @prop {boolean} [invalidateInitialEntries=false]
  * @prop {boolean} [autostart=true]
  * @prop {(entry: Object) => string} [getIdFromEntry=entry => entry.id]
@@ -43,7 +44,7 @@ export default class extends EventEmitter {
      * @readonly
      */
     this.options = {
-      pollIntervalSeconds: 10,
+      pollInterval: ms`1 minute`,
       invalidateInitialEntries: false,
       autostart: false,
       getIdFromEntry: entry => entry.id,
@@ -87,7 +88,7 @@ export default class extends EventEmitter {
       debug("Skipped start(), because PollingEmitter is already running")
       return
     }
-    debug("Starting PollingEmitter with an interval of %s seconds", this.options.pollIntervalSeconds)
+    debug("Starting PollingEmitter with an interval of %s ms", this.options.pollInterval)
     this.isRunning = true
     const job = async (iteration, stop) => {
       if (!this.isRunning) {
@@ -138,7 +139,7 @@ export default class extends EventEmitter {
         }
       }
     }
-    intervalPromise(job, this.options.pollIntervalSeconds * 1000)
+    intervalPromise(job, this.options.pollInterval)
   }
 
   /**

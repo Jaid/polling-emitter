@@ -13,7 +13,7 @@ const {default: PollingEmitter} = indexModule
 it("should run", async () => {
   let newEntryFired = false
   const emitter = new PollingEmitter({
-    pollIntervalSeconds: 5,
+    pollInterval: ms`5 seconds`,
     invalidateInitialEntries: false,
     fetchEntries: () => [{key: "a"}],
     getIdFromEntry: ({key}) => key,
@@ -36,7 +36,7 @@ it("Extending class should work", async () => {
     constructor() {
       super({
         getIdFromEntry: entry => entry.myId,
-        pollIntervalSeconds: 2,
+        pollInterval: ms`2 seconds`,
         invalidateInitialEntries: false,
       })
       this.start()
