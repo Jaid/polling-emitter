@@ -103,7 +103,7 @@ export default class extends EventEmitter {
             const id = this.options.getIdFromEntry(entry)
             this.processedEntryIds.add(id)
             debug("Initially invalidated %s", id)
-            emit("initialEntry", entry)
+            this.emit("initialEntry", entry)
           }
           return
         }
