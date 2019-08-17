@@ -14,7 +14,7 @@
     "acorn": "^7.0.0",
     "babel-jest": "^24.9.0",
     "babel-preset-jaid": "^6.9.0",
-    "browserslist-config-jaid-universal": "^2.0.0",
+    "browserslist-config-jaid-universal": "^2.1.0",
     "delay": "^4.3.0",
     "eslint": "^6.1.0",
     "eslint-config-jaid": "^1.28.0",
