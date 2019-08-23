@@ -106,21 +106,6 @@ export default class extends EventEmitter {
       try {
         const fetchedEntries = await this.fetchEntries()
         this.successfulRunsCount++
-        if (this.options.invalidateInitialEntries && this.successfulRunsCount === 1) {
-          for (const entry of fetchedEntries) {
-            const id = this.options.getIdFromEntry(entry)
-            this.processedEntryIds.add(id)
-            debug("Initially invalidated %s", id)
-            if (this.hasProcessEntryFunction) {
-              const shouldEmitEntry = await this.processEntry(entry)
-              if (shouldEmitEntry === false) {
-                return
-              }
-            }
-            this.emit("initialEntry", entry)
-          }
-          return
-        }
         if (fetchedEntries |> isEmpty) {
           return
         }
@@ -138,7 +123,11 @@ export default class extends EventEmitter {
               return
             }
           }
-          this.emit("newEntry", entry)
+          let eventName = "newEntry"
+          if (this.options.invalidateInitialEntries && this.successfulRunsCount === 1) {
+            eventName = "initialEntry"
+          }
+          this.emit(eventName, entry)
         }
       } catch (error) {
         if (this.hasHandleErrorFunction) {
