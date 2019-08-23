@@ -120,7 +120,7 @@ export default class extends EventEmitter {
           if (this.hasProcessEntryFunction) {
             const shouldEmitEntry = await this.processEntry(entry)
             if (shouldEmitEntry === false) {
-              return
+              continue
             }
           }
           let eventName = "newEntry"
