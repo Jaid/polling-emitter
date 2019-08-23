@@ -74,6 +74,14 @@ export default class extends EventEmitter {
     if (this.options.handleError) {
       this.handleError = this.options.handleError
     }
+    /**
+     * @type {boolean}
+     */
+    this.hasProcessEntryFunction = isFunction(this.processEntry)
+    /**
+     * @type {boolean}
+     */
+    this.hasHandleErrorFunction = isFunction(this.handleError)
     if (this.options.autostart) {
       this.start()
     }
@@ -103,6 +111,12 @@ export default class extends EventEmitter {
             const id = this.options.getIdFromEntry(entry)
             this.processedEntryIds.add(id)
             debug("Initially invalidated %s", id)
+            if (this.hasProcessEntryFunction) {
+              const shouldEmitEntry = await this.processEntry(entry)
+              if (shouldEmitEntry === false) {
+                return
+              }
+            }
             this.emit("initialEntry", entry)
           }
           return
@@ -118,22 +132,18 @@ export default class extends EventEmitter {
           const id = this.options.getIdFromEntry(entry)
           this.processedEntryIds.add(id)
           debug("Invalidated %s", id)
-          if (this.processEntry |> isFunction) {
+          if (this.hasProcessEntryFunction) {
             const shouldEmitEntry = await this.processEntry(entry)
             if (shouldEmitEntry === false) {
               return
             }
           }
-
-          /**
-           * @event PollingEmitter#newEntry
-           */
           this.emit("newEntry", entry)
         }
       } catch (error) {
-        if (this.handleError) {
+        if (this.hasHandleErrorFunction) {
           debug("Handling error: %s", error)
-          this.handleError(error)
+          await this.handleError(error)
         } else {
           debug("Throwing error: %s", error)
           throw error
