@@ -14,6 +14,7 @@ const debug = require("debug")(_PKG_NAME)
  * @prop {number} [pollInterval=60000]
  * @prop {boolean} [invalidateInitialEntries=false]
  * @prop {boolean} [autostart=true]
+ * @prop {boolean} [repeatInitialEntriesOnError=true]
  * @prop {(entry: Object) => string} [getIdFromEntry=entry => entry.id]
  * @prop {Function} [getIdFromEntry=entry => entry.id]
  * @prop {(entry: Object, id: string) => (boolean|void|Promise<boolean|void>)} [processEntry]
@@ -87,6 +88,48 @@ export default class extends EventEmitter {
     }
   }
 
+  async tick(iteration, stop) {
+    if (!this.isRunning) {
+      stop()
+      return
+    }
+    try {
+      const fetchedEntries = await this.fetchEntries()
+      this.successfulRunsCount++
+      if (fetchedEntries |> isEmpty) {
+        return
+      }
+      const unprocessedEntries = fetchedEntries.filter(entry => !this.hasAlreadyProcessedEntry(entry))
+      if (unprocessedEntries |> isEmpty) {
+        return
+      }
+      for (const entry of unprocessedEntries) {
+        const id = this.options.getIdFromEntry(entry)
+        this.processedEntryIds.add(id)
+        debug("Invalidated %s", id)
+        if (this.hasProcessEntryFunction) {
+          const shouldEmitEntry = await this.processEntry(entry)
+          if (shouldEmitEntry === false) {
+            continue
+          }
+        }
+        let eventName = "newEntry"
+        if (this.options.invalidateInitialEntries && this.successfulRunsCount === 1) {
+          eventName = "initialEntry"
+        }
+        this.emit(eventName, entry)
+      }
+    } catch (error) {
+      if (this.hasHandleErrorFunction) {
+        debug("Handling error: %s", error)
+        await this.handleError(error)
+      } else {
+        debug("Throwing error: %s", error)
+        throw error
+      }
+    }
+  }
+
   /**
    * @function
    * @fires PollingEmitter#newEntry
@@ -98,48 +141,7 @@ export default class extends EventEmitter {
     }
     debug("Starting PollingEmitter with an interval of %s ms", this.options.pollInterval)
     this.isRunning = true
-    const job = async (iteration, stop) => {
-      if (!this.isRunning) {
-        stop()
-        return
-      }
-      try {
-        const fetchedEntries = await this.fetchEntries()
-        this.successfulRunsCount++
-        if (fetchedEntries |> isEmpty) {
-          return
-        }
-        const unprocessedEntries = fetchedEntries.filter(entry => !this.hasAlreadyProcessedEntry(entry))
-        if (unprocessedEntries |> isEmpty) {
-          return
-        }
-        for (const entry of unprocessedEntries) {
-          const id = this.options.getIdFromEntry(entry)
-          this.processedEntryIds.add(id)
-          debug("Invalidated %s", id)
-          if (this.hasProcessEntryFunction) {
-            const shouldEmitEntry = await this.processEntry(entry)
-            if (shouldEmitEntry === false) {
-              continue
-            }
-          }
-          let eventName = "newEntry"
-          if (this.options.invalidateInitialEntries && this.successfulRunsCount === 1) {
-            eventName = "initialEntry"
-          }
-          this.emit(eventName, entry)
-        }
-      } catch (error) {
-        if (this.hasHandleErrorFunction) {
-          debug("Handling error: %s", error)
-          await this.handleError(error)
-        } else {
-          debug("Throwing error: %s", error)
-          throw error
-        }
-      }
-    }
-    intervalPromise(job, this.options.pollInterval)
+    intervalPromise(this.tick.bind(this), this.options.pollInterval)
   }
 
   /**
