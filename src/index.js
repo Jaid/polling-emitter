@@ -14,7 +14,6 @@ const debug = require("debug")(_PKG_NAME)
  * @prop {number} [pollInterval=60000]
  * @prop {boolean} [invalidateInitialEntries=false]
  * @prop {boolean} [autostart=true]
- * @prop {boolean} [repeatInitialEntriesOnError=true]
  * @prop {(entry: Object) => string} [getIdFromEntry=entry => entry.id]
  * @prop {Function} [getIdFromEntry=entry => entry.id]
  * @prop {(entry: Object, id: string) => (boolean|void|Promise<boolean|void>)} [processEntry]
