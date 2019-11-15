@@ -93,40 +93,29 @@ export default class extends EventEmitter {
       stop()
       return
     }
-    try {
-      const fetchedEntries = await this.fetchEntries()
-      this.successfulRunsCount++
-      if (fetchedEntries |> isEmpty) {
-        return
-      }
-      const unprocessedEntries = fetchedEntries.filter(entry => !this.hasAlreadyProcessedEntry(entry))
-      if (unprocessedEntries |> isEmpty) {
-        return
-      }
-      for (const entry of unprocessedEntries) {
-        const id = this.options.getIdFromEntry(entry)
-        this.processedEntryIds.add(id)
-        debug("Invalidated %s", id)
-        if (this.hasProcessEntryFunction) {
-          const shouldEmitEntry = await this.processEntry(entry)
-          if (shouldEmitEntry === false) {
-            continue
-          }
+    const fetchedEntries = await this.fetchEntries()
+    if (fetchedEntries |> isEmpty) {
+      return
+    }
+    const unprocessedEntries = fetchedEntries.filter(entry => !this.hasAlreadyProcessedEntry(entry))
+    if (unprocessedEntries |> isEmpty) {
+      return
+    }
+    for (const entry of unprocessedEntries) {
+      const id = this.options.getIdFromEntry(entry)
+      this.processedEntryIds.add(id)
+      debug("Invalidated %s", id)
+      if (this.hasProcessEntryFunction) {
+        const shouldEmitEntry = await this.processEntry(entry)
+        if (shouldEmitEntry === false) {
+          continue
         }
-        let eventName = "newEntry"
-        if (this.options.invalidateInitialEntries && this.successfulRunsCount === 1) {
-          eventName = "initialEntry"
-        }
-        this.emit(eventName, entry)
       }
-    } catch (error) {
-      if (this.hasHandleErrorFunction) {
-        debug("Handling error: %s", error)
-        await this.handleError(error)
-      } else {
-        debug("Throwing error: %s", error)
-        throw error
+      let eventName = "newEntry"
+      if (this.options.invalidateInitialEntries && this.successfulRunsCount === 1) {
+        eventName = "initialEntry"
       }
+      this.emit(eventName, entry)
     }
   }
 
@@ -141,7 +130,20 @@ export default class extends EventEmitter {
     }
     debug("Starting PollingEmitter with an interval of %s ms", this.options.pollInterval)
     this.isRunning = true
-    intervalPromise(this.tick.bind(this), this.options.pollInterval)
+    intervalPromise(async (...args) => {
+      try {
+        await this.tick.bind(this)(...args)
+        this.successfulRunsCount++
+      } catch (error) {
+        if (this.hasHandleErrorFunction) {
+          debug("Handling error: %s", error)
+          await this.handleError(error)
+        } else {
+          debug("Throwing error: %s", error)
+          throw error
+        }
+      }
+    }, this.options.pollInterval)
   }
 
   /**
