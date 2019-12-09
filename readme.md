@@ -1,20 +1,20 @@
 # polling-emitter
 
 
-Polls data from any source at given interval and fires events on changes.
 
 ## Installation
-<a href='https://npmjs.com/package/polling-emitter'><img alt='npm logo' src='https://raw.githubusercontent.com/npm/logos/master/npm%20logo/npm-logo-red.png' height=16/></a>
+<a href='https://npmjs.com/package/polling-emitter'><img alt='npm logo' src='https://github.com/Jaid/action-readme/raw/master/images/base-assets/npm.png'/></a>
 ```bash
-npm install --save polling-emitter@^
+npm install --save polling-emitter@^4.0.1
 ```
-<a href='https://yarnpkg.com/package/polling-emitter'><img alt='Yarn logo' src='https://raw.githubusercontent.com/yarnpkg/assets/master/yarn-kitten-full.png' height=24/></a>
+<a href='https://yarnpkg.com/package/polling-emitter'><img alt='Yarn logo' src='https://github.com/Jaid/action-readme/raw/master/images/base-assets/yarn.png'/></a>
 ```bash
-yarn add polling-emitter@^
+yarn add polling-emitter@^4.0.1
 ```
 
 
 ## Try it out
+<img alt='Chromium logo' src='https://github.com/Jaid/action-readme/raw/master/images/base-assets/browser.png'/>
 Open a browser's JavaScript console and execute:
 
 ```javascript
@@ -24,10 +24,10 @@ scriptElement.setAttribute("src","https://unpkg.com/polling-emitter@4.0.1");
 document.querySelector("head").appendChild(scriptElement);
 ```
 
-The module is now loaded in a variable.
+This module is now loaded in a variable that can be accessed in any scope.
 
 ```javascript
-typeof polling-emitter.default
+typeof PollingEmitter.default
 ```
 
 ## Documentation
