@@ -6,11 +6,11 @@ Polls data from any source at given interval and fires events on changes.
 ## Installation
 <a href='https://npmjs.com/package/polling-emitter'><img alt='npm logo' src='https://github.com/Jaid/action-readme/raw/master/images/base-assets/npm.png'/></a>
 ```bash
-npm install --save polling-emitter@^4.0.1
+npm install --save polling-emitter@^4.1.0
 ```
 <a href='https://yarnpkg.com/package/polling-emitter'><img alt='Yarn logo' src='https://github.com/Jaid/action-readme/raw/master/images/base-assets/yarn.png'/></a>
 ```bash
-yarn add polling-emitter@^4.0.1
+yarn add polling-emitter@^4.1.0
 ```
 
 
@@ -21,7 +21,7 @@ Open a browser's JavaScript console and execute:
 ```javascript
 const scriptElement = document.createElement("script");
 scriptElement.setAttribute("type","text/javascript");
-scriptElement.setAttribute("src","https://unpkg.com/polling-emitter@4.0.1");
+scriptElement.setAttribute("src","https://unpkg.com/polling-emitter@4.1.0");
 document.querySelector("head").appendChild(scriptElement);
 ```
 
