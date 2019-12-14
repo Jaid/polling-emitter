@@ -1,6 +1,7 @@
 # polling-emitter
 
 
+Polls data from any source at given interval and fires events on changes.
 
 ## Installation
 <a href='https://npmjs.com/package/polling-emitter'><img alt='npm logo' src='https://github.com/Jaid/action-readme/raw/master/images/base-assets/npm.png'/></a>
