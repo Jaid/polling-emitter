@@ -67,3 +67,44 @@ it("Extending class should work", async () => {
   expect(emitter.interval).toBe(undefined)
   expect(newEntryFired).toBeTruthy()
 }, ms`10 seconds`)
+
+it("should invalidate initial entries", async () => {
+  const entrySource = {
+    entriesToFetch: [
+      {
+        id: "rem",
+        hairColor: "blue",
+      },
+    ],
+    fetch() {
+      const returnValue = [...this.entriesToFetch]
+      this.entriesToFetch.push({
+        id: "ram",
+        hairColor: "pink",
+      })
+      return returnValue
+    },
+  }
+  let newEntryFired = false
+  let initialEntryFired = false
+  const emitter = new PollingEmitter({
+    pollInterval: ms`1 second`,
+    invalidateInitialEntries: true,
+    fetchEntries: () => entrySource.fetch(),
+    autostart: true,
+  })
+  emitter.on("initialEntry", entry => {
+    expect(entry.hairColor).toBe("blue")
+    initialEntryFired = true
+  })
+  emitter.on("newEntry", entry => {
+    expect(entry.hairColor).toBe("pink")
+    newEntryFired = true
+  })
+  expect(emitter.processedEntryIds.size).toBe(0)
+  await delay(ms`3 seconds`)
+  expect([...emitter.processedEntryIds]).toStrictEqual(["rem", "ram"])
+  emitter.stop()
+  expect(newEntryFired).toBeTruthy()
+  expect(initialEntryFired).toBeTruthy()
+}, ms`10 seconds`)

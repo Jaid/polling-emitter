@@ -108,7 +108,7 @@ export default class extends EventEmitter {
         }
       }
       let eventName = "newEntry"
-      if (this.options.invalidateInitialEntries && this.successfulRunsCount === 1) {
+      if (this.options.invalidateInitialEntries && this.successfulRunsCount === 0) {
         eventName = "initialEntry"
       }
       this.emit(eventName, entry)
@@ -128,7 +128,8 @@ export default class extends EventEmitter {
     this.isRunning = true
     intervalPromise(async (...args) => {
       try {
-        await this.tick.bind(this)(...args)
+        const tickPromise = this.tick.bind(this)(...args)
+        await tickPromise
         this.successfulRunsCount++
       } catch (error) {
         if (this.hasHandleErrorFunction) {
