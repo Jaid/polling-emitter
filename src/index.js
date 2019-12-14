@@ -1,9 +1,9 @@
 /** @module polling-emitter */
 
 import EventEmitter from "eventemitter3"
-import {isFunction} from "lodash"
 import {isEmpty} from "has-content"
 import intervalPromise from "interval-promise"
+import {isFunction} from "lodash"
 import ms from "ms.macro"
 
 const debug = require("debug")(_PKG_NAME)
