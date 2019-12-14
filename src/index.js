@@ -90,11 +90,11 @@ export default class extends EventEmitter {
       return
     }
     const fetchedEntries = await this.fetchEntries()
-    if (fetchedEntries |> isEmpty) {
+    if (isEmpty(fetchedEntries)) {
       return
     }
     const unprocessedEntries = fetchedEntries.filter(entry => !this.hasAlreadyProcessedEntry(entry))
-    if (unprocessedEntries |> isEmpty) {
+    if (isEmpty(unprocessedEntries)) {
       return
     }
     for (const entry of unprocessedEntries) {
