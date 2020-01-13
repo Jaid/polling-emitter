@@ -36,5 +36,6 @@
     "prepareActionJest": "npm run build:prod"
   },
   "name": "polling-emitter",
-  "description": "Polls data from any source at given interval and fires events on changes."
+  "description": "Polls data from any source at given interval and fires events on changes.",
+  "funding": "https://github.com/sponsors/jaid"
 }
