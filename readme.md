@@ -1,9 +1,9 @@
 # polling-emitter
 
 
-<a href="https://raw.githubusercontent.com/Jaid/polling-emitter/master/license.txt"><img src="https://img.shields.io/github/license/Jaid/polling-emitter?style=flat-square" alt="License"/></a>  
-<a href="https://actions-badge.atrox.dev/Jaid/polling-emitter/goto"><img src="https://img.shields.io/endpoint.svg?style=flat-square&url=https%3A%2F%2Factions-badge.atrox.dev%2FJaid%2Fpolling-emitter%2Fbadge" alt="Build status"/></a> <a href="https://github.com/Jaid/polling-emitter/commits"><img src="https://img.shields.io/github/commits-since/Jaid/polling-emitter/v4.1.0?style=flat-square&logo=github" alt="Commits since v4.1.0"/></a> <a href="https://github.com/Jaid/polling-emitter/commits"><img src="https://img.shields.io/github/last-commit/Jaid/polling-emitter?style=flat-square&logo=github" alt="Last commit"/></a> <a href="https://github.com/Jaid/polling-emitter/issues"><img src="https://img.shields.io/github/issues/Jaid/polling-emitter?style=flat-square&logo=github" alt="Issues"/></a>  
-<a href="https://npmjs.com/package/polling-emitter"><img src="https://img.shields.io/npm/v/polling-emitter?style=flat-square&logo=npm&label=latest%20version" alt="Latest version on npm"/></a> <a href="https://github.com/Jaid/polling-emitter/network/dependents"><img src="https://img.shields.io/librariesio/dependents/npm/polling-emitter?style=flat-square&logo=npm" alt="Dependents"/></a> <a href="https://npmjs.com/package/polling-emitter"><img src="https://img.shields.io/npm/dm/polling-emitter?style=flat-square&logo=npm" alt="Downloads"/></a>
+<a href="https://raw.githubusercontent.com/jaid/polling-emitter/master/license.txt"><img src="https://img.shields.io/github/license/jaid/polling-emitter?style=flat-square" alt="License"/></a> <a href="https://github.com/sponsors/jaid"><img src="https://img.shields.io/badge/<3-Sponsor-FF45F1?style=flat-square" alt="Sponsor polling-emitter"/></a>
+<a href="https://actions-badge.atrox.dev/jaid/polling-emitter/goto"><img src="https://img.shields.io/endpoint.svg?style=flat-square&url=https%3A%2F%2Factions-badge.atrox.dev%2Fjaid%2Fpolling-emitter%2Fbadge" alt="Build status"/></a> <a href="https://github.com/jaid/polling-emitter/commits"><img src="https://img.shields.io/github/commits-since/jaid/polling-emitter/v4.1.0?style=flat-square&logo=github" alt="Commits since v4.1.0"/></a> <a href="https://github.com/jaid/polling-emitter/commits"><img src="https://img.shields.io/github/last-commit/jaid/polling-emitter?style=flat-square&logo=github" alt="Last commit"/></a> <a href="https://github.com/jaid/polling-emitter/issues"><img src="https://img.shields.io/github/issues/jaid/polling-emitter?style=flat-square&logo=github" alt="Issues"/></a>  
+<a href="https://npmjs.com/package/polling-emitter"><img src="https://img.shields.io/npm/v/polling-emitter?style=flat-square&logo=npm&label=latest%20version" alt="Latest version on npm"/></a> <a href="https://github.com/jaid/polling-emitter/network/dependents"><img src="https://img.shields.io/librariesio/dependents/npm/polling-emitter?style=flat-square&logo=npm" alt="Dependents"/></a> <a href="https://npmjs.com/package/polling-emitter"><img src="https://img.shields.io/npm/dm/polling-emitter?style=flat-square&logo=npm" alt="Downloads"/></a>
 
 **Polls data from any source at given interval and fires events on changes.**
 
@@ -41,14 +41,13 @@ yarn add polling-emitter@^4.1.0
 
 
 
-
 ## Development
 
 
 
 Setting up:
 ```bash
-git clone git@github.com:Jaid/polling-emitter.git
+git clone git@github.com:jaid/polling-emitter.git
 cd polling-emitter
 npm install
 ```
