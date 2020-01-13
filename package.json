@@ -37,5 +37,9 @@
   },
   "name": "polling-emitter",
   "description": "Polls data from any source at given interval and fires events on changes.",
-  "funding": "https://github.com/sponsors/jaid"
+  "funding": "https://github.com/sponsors/jaid",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jaid/polling-emitter"
+  }
 }
