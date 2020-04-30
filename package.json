@@ -42,5 +42,16 @@
     "url": "https://github.com/jaid/polling-emitter"
   },
   "homepage": "https://github.com/Jaid/polling-emitter",
-  "keywords": []
+  "keywords": [
+    "class",
+    "emitter",
+    "event",
+    "event-emitter",
+    "lib",
+    "library",
+    "polling",
+    "polling-emitter",
+    "util",
+    "utility"
+  ]
 }
